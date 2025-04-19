@@ -3,10 +3,16 @@ FROM node:20-slim
 
 WORKDIR /usr/src/app
 
-RUN npm install -g vite
+# Install git
+RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
 
-RUN ln -s /usr/local/bin/node /usr/bin/node
+COPY . .
 
-ENTRYPOINT ["npx", "evolution-manager", "server", "start"] 
+RUN yarn install
+RUN npm install
+RUN yarn build
 
-EXPOSE 9615
+RUN npm install -g serve
+CMD ["serve", "-s", "dist", "-l", "8083"]
+
+EXPOSE 8083
